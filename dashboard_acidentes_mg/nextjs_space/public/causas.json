@@ -1,0 +1,78 @@
+{
+  "top_causas": [
+    {
+      "causa": "AusÃªncia de reaÃ§Ã£o do condutor",
+      "total_acidentes": 3242,
+      "total_mortos": 214,
+      "total_feridos": 3970,
+      "percentual": 17.19
+    },
+    {
+      "causa": "Velocidade IncompatÃ­vel",
+      "total_acidentes": 2329,
+      "total_mortos": 207,
+      "total_feridos": 3358,
+      "percentual": 12.35
+    },
+    {
+      "causa": "ReaÃ§Ã£o tardia ou ineficiente do condutor",
+      "total_acidentes": 2296,
+      "total_mortos": 137,
+      "total_feridos": 2826,
+      "percentual": 12.18
+    },
+    {
+      "causa": "Acessar a via sem observar a presenÃ§a dos outros veÃ­culos",
+      "total_acidentes": 1317,
+      "total_mortos": 79,
+      "total_feridos": 1794,
+      "percentual": 6.98
+    },
+    {
+      "causa": "Demais falhas mecÃ¢nicas ou elÃ©tricas",
+      "total_acidentes": 1066,
+      "total_mortos": 21,
+      "total_feridos": 791,
+      "percentual": 5.65
+    },
+    {
+      "causa": "Condutor Dormindo",
+      "total_acidentes": 851,
+      "total_mortos": 74,
+      "total_feridos": 1208,
+      "percentual": 4.51
+    },
+    {
+      "causa": "Condutor deixou de manter distÃ¢ncia do veÃ­culo da frente",
+      "total_acidentes": 848,
+      "total_mortos": 19,
+      "total_feridos": 1021,
+      "percentual": 4.5
+    },
+    {
+      "causa": "Manobra de mudanÃ§a de faixa",
+      "total_acidentes": 803,
+      "total_mortos": 33,
+      "total_feridos": 981,
+      "percentual": 4.26
+    },
+    {
+      "causa": "IngestÃ£o de Ã¡lcool pelo condutor",
+      "total_acidentes": 709,
+      "total_mortos": 35,
+      "total_feridos": 637,
+      "percentual": 3.76
+    },
+    {
+      "causa": "Transitar na contramÃ£o",
+      "total_acidentes": 588,
+      "total_mortos": 209,
+      "total_feridos": 1015,
+      "percentual": 3.12
+    }
+  ],
+  "metadata": {
+    "total_causas_distintas": 66,
+    "ultima_atualizacao": "2026-02-20 18:40:30"
+  }
+}

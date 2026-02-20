@@ -1,0 +1,72 @@
+{
+  "periodo": {
+    "mes_atual": "2025-12",
+    "mes_anterior": "2025-11"
+  },
+  "kpis": [
+    {
+      "id": "total_acidentes",
+      "titulo": "Total de Acidentes",
+      "valor": 878,
+      "formato": "numero",
+      "tendencia": {
+        "valor": 3.42,
+        "texto": "+3.42%",
+        "tipo": "aumento"
+      },
+      "descricao": "vs mês anterior"
+    },
+    {
+      "id": "total_mortos",
+      "titulo": "Total de Mortos",
+      "valor": 73,
+      "formato": "numero",
+      "tendencia": {
+        "valor": 28.07,
+        "texto": "+28.07%",
+        "tipo": "aumento"
+      },
+      "descricao": "vs mês anterior"
+    },
+    {
+      "id": "total_feridos",
+      "titulo": "Total de Feridos",
+      "valor": 1199,
+      "formato": "numero",
+      "tendencia": {
+        "valor": 16.86,
+        "texto": "+16.86%",
+        "tipo": "aumento"
+      },
+      "descricao": "vs mês anterior"
+    },
+    {
+      "id": "taxa_mortalidade",
+      "titulo": "Taxa de Mortalidade",
+      "valor": 5.74,
+      "formato": "percentual",
+      "tendencia": {
+        "valor": 9.13,
+        "texto": "+9.13%",
+        "tipo": "aumento"
+      },
+      "descricao": "vs mês anterior"
+    },
+    {
+      "id": "indice_gravidade",
+      "titulo": "Índice de Gravidade",
+      "valor": 1.63,
+      "formato": "decimal",
+      "tendencia": {
+        "valor": -2.98,
+        "texto": "-2.98%",
+        "tipo": "reducao"
+      },
+      "descricao": "vs mês anterior"
+    }
+  ],
+  "metadata": {
+    "ultima_atualizacao": "2026-02-20 18:40:30",
+    "periodo_dados": "2024-01-01 a 2025-12-31"
+  }
+}

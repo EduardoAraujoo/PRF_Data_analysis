@@ -1,0 +1,149 @@
+{
+  "top_municipios": [
+    {
+      "posicao": 1,
+      "municipio": "BETIM",
+      "total_acidentes": 1381,
+      "total_mortos": 45,
+      "total_feridos": 1569
+    },
+    {
+      "posicao": 2,
+      "municipio": "UBERABA",
+      "total_acidentes": 745,
+      "total_mortos": 40,
+      "total_feridos": 861
+    },
+    {
+      "posicao": 3,
+      "municipio": "UBERLANDIA",
+      "total_acidentes": 676,
+      "total_mortos": 29,
+      "total_feridos": 729
+    },
+    {
+      "posicao": 4,
+      "municipio": "CONTAGEM",
+      "total_acidentes": 622,
+      "total_mortos": 34,
+      "total_feridos": 677
+    },
+    {
+      "posicao": 5,
+      "municipio": "GOVERNADOR VALADARES",
+      "total_acidentes": 488,
+      "total_mortos": 21,
+      "total_feridos": 650
+    },
+    {
+      "posicao": 6,
+      "municipio": "MANHUACU",
+      "total_acidentes": 439,
+      "total_mortos": 30,
+      "total_feridos": 548
+    },
+    {
+      "posicao": 7,
+      "municipio": "RIBEIRAO DAS NEVES",
+      "total_acidentes": 432,
+      "total_mortos": 11,
+      "total_feridos": 486
+    },
+    {
+      "posicao": 8,
+      "municipio": "MURIAE",
+      "total_acidentes": 334,
+      "total_mortos": 12,
+      "total_feridos": 440
+    },
+    {
+      "posicao": 9,
+      "municipio": "NOVA LIMA",
+      "total_acidentes": 305,
+      "total_mortos": 7,
+      "total_feridos": 344
+    },
+    {
+      "posicao": 10,
+      "municipio": "TEOFILO OTONI",
+      "total_acidentes": 297,
+      "total_mortos": 55,
+      "total_feridos": 374
+    }
+  ],
+  "top_brs": [
+    {
+      "posicao": 1,
+      "br": "381",
+      "total_acidentes": 5636,
+      "total_mortos": 327,
+      "total_feridos": 6999
+    },
+    {
+      "posicao": 2,
+      "br": "40",
+      "total_acidentes": 3763,
+      "total_mortos": 275,
+      "total_feridos": 4602
+    },
+    {
+      "posicao": 3,
+      "br": "116",
+      "total_acidentes": 2790,
+      "total_mortos": 313,
+      "total_feridos": 3751
+    },
+    {
+      "posicao": 4,
+      "br": "262",
+      "total_acidentes": 2153,
+      "total_mortos": 182,
+      "total_feridos": 2596
+    },
+    {
+      "posicao": 5,
+      "br": "365",
+      "total_acidentes": 1234,
+      "total_mortos": 174,
+      "total_feridos": 1672
+    },
+    {
+      "posicao": 6,
+      "br": "50",
+      "total_acidentes": 1191,
+      "total_mortos": 57,
+      "total_feridos": 1329
+    },
+    {
+      "posicao": 7,
+      "br": "251",
+      "total_acidentes": 547,
+      "total_mortos": 102,
+      "total_feridos": 779
+    },
+    {
+      "posicao": 8,
+      "br": "153",
+      "total_acidentes": 532,
+      "total_mortos": 50,
+      "total_feridos": 669
+    },
+    {
+      "posicao": 9,
+      "br": "267",
+      "total_acidentes": 286,
+      "total_mortos": 38,
+      "total_feridos": 424
+    },
+    {
+      "posicao": 10,
+      "br": "459",
+      "total_acidentes": 226,
+      "total_mortos": 19,
+      "total_feridos": 303
+    }
+  ],
+  "metadata": {
+    "ultima_atualizacao": "2026-02-20 18:40:30"
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "municipios_criticos": {
+    "criterio": "Maior índice de gravidade (mínimo 5 acidentes)",
+    "dados": [
+      {
+        "posicao": 1,
+        "municipio": "GUIMARANIA",
+        "indice_gravidade": 2.8,
+        "total_acidentes": 9,
+        "total_mortos": 2,
+        "total_feridos": 8
+      },
+      {
+        "posicao": 2,
+        "municipio": "CARAI",
+        "indice_gravidade": 2.79,
+        "total_acidentes": 25,
+        "total_mortos": 9,
+        "total_feridos": 29
+      },
+      {
+        "posicao": 3,
+        "municipio": "ROMARIA",
+        "indice_gravidade": 2.57,
+        "total_acidentes": 15,
+        "total_mortos": 5,
+        "total_feridos": 18
+      },
+      {
+        "posicao": 4,
+        "municipio": "MATHIAS LOBATO",
+        "indice_gravidade": 2.45,
+        "total_acidentes": 19,
+        "total_mortos": 5,
+        "total_feridos": 24
+      },
+      {
+        "posicao": 5,
+        "municipio": "CAMPANARIO",
+        "indice_gravidade": 2.3,
+        "total_acidentes": 27,
+        "total_mortos": 7,
+        "total_feridos": 76
+      },
+      {
+        "posicao": 6,
+        "municipio": "SANTA VITORIA",
+        "indice_gravidade": 2.3,
+        "total_acidentes": 34,
+        "total_mortos": 11,
+        "total_feridos": 43
+      },
+      {
+        "posicao": 7,
+        "municipio": "FREI INOCENCIO",
+        "indice_gravidade": 2.3,
+        "total_acidentes": 26,
+        "total_mortos": 12,
+        "total_feridos": 77
+      },
+      {
+        "posicao": 8,
+        "municipio": "OLARIA",
+        "indice_gravidade": 2.27,
+        "total_acidentes": 7,
+        "total_mortos": 2,
+        "total_feridos": 9
+      },
+      {
+        "posicao": 9,
+        "municipio": "FRUTA DE LEITE",
+        "indice_gravidade": 2.25,
+        "total_acidentes": 36,
+        "total_mortos": 7,
+        "total_feridos": 52
+      },
+      {
+        "posicao": 10,
+        "municipio": "DIVISA ALEGRE",
+        "indice_gravidade": 2.25,
+        "total_acidentes": 22,
+        "total_mortos": 7,
+        "total_feridos": 25
+      }
+    ]
+  },
+  "brs_criticas": {
+    "criterio": "Maior taxa de mortalidade (mínimo 10 acidentes)",
+    "dados": [
+      {
+        "posicao": 1,
+        "br": "251",
+        "taxa_mortalidade": 11.58,
+        "total_acidentes": 547,
+        "total_mortos": 102,
+        "total_feridos": 779
+      },
+      {
+        "posicao": 2,
+        "br": "365",
+        "taxa_mortalidade": 9.43,
+        "total_acidentes": 1234,
+        "total_mortos": 174,
+        "total_feridos": 1672
+      },
+      {
+        "posicao": 3,
+        "br": "267",
+        "taxa_mortalidade": 8.23,
+        "total_acidentes": 286,
+        "total_mortos": 38,
+        "total_feridos": 424
+      },
+      {
+        "posicao": 4,
+        "br": "116",
+        "taxa_mortalidade": 7.7,
+        "total_acidentes": 2790,
+        "total_mortos": 313,
+        "total_feridos": 3751
+      },
+      {
+        "posicao": 5,
+        "br": "153",
+        "taxa_mortalidade": 6.95,
+        "total_acidentes": 532,
+        "total_mortos": 50,
+        "total_feridos": 669
+      },
+      {
+        "posicao": 6,
+        "br": "262",
+        "taxa_mortalidade": 6.55,
+        "total_acidentes": 2153,
+        "total_mortos": 182,
+        "total_feridos": 2596
+      },
+      {
+        "posicao": 7,
+        "br": "364",
+        "taxa_mortalidade": 6.52,
+        "total_acidentes": 81,
+        "total_mortos": 6,
+        "total_feridos": 86
+      },
+      {
+        "posicao": 8,
+        "br": "459",
+        "taxa_mortalidade": 5.9,
+        "total_acidentes": 226,
+        "total_mortos": 19,
+        "total_feridos": 303
+      },
+      {
+        "posicao": 9,
+        "br": "40",
+        "taxa_mortalidade": 5.64,
+        "total_acidentes": 3763,
+        "total_mortos": 275,
+        "total_feridos": 4602
+      },
+      {
+        "posicao": 10,
+        "br": "381",
+        "taxa_mortalidade": 4.46,
+        "total_acidentes": 5636,
+        "total_mortos": 327,
+        "total_feridos": 6999
+      }
+    ]
+  },
+  "metadata": {
+    "ultima_atualizacao": "2026-02-20 18:40:31"
+  }
+}

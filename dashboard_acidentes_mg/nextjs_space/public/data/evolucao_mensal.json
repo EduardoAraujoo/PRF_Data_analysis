@@ -1,0 +1,153 @@
+{
+  "evolucao": [
+    {
+      "mes": "2024-01",
+      "total_acidentes": 749,
+      "total_mortos": 72,
+      "total_feridos": 1134
+    },
+    {
+      "mes": "2024-02",
+      "total_acidentes": 669,
+      "total_mortos": 55,
+      "total_feridos": 900
+    },
+    {
+      "mes": "2024-03",
+      "total_acidentes": 838,
+      "total_mortos": 55,
+      "total_feridos": 978
+    },
+    {
+      "mes": "2024-04",
+      "total_acidentes": 714,
+      "total_mortos": 57,
+      "total_feridos": 847
+    },
+    {
+      "mes": "2024-05",
+      "total_acidentes": 774,
+      "total_mortos": 62,
+      "total_feridos": 917
+    },
+    {
+      "mes": "2024-06",
+      "total_acidentes": 725,
+      "total_mortos": 59,
+      "total_feridos": 864
+    },
+    {
+      "mes": "2024-07",
+      "total_acidentes": 801,
+      "total_mortos": 68,
+      "total_feridos": 1088
+    },
+    {
+      "mes": "2024-08",
+      "total_acidentes": 762,
+      "total_mortos": 80,
+      "total_feridos": 922
+    },
+    {
+      "mes": "2024-09",
+      "total_acidentes": 706,
+      "total_mortos": 53,
+      "total_feridos": 830
+    },
+    {
+      "mes": "2024-10",
+      "total_acidentes": 867,
+      "total_mortos": 67,
+      "total_feridos": 1096
+    },
+    {
+      "mes": "2024-11",
+      "total_acidentes": 766,
+      "total_mortos": 65,
+      "total_feridos": 924
+    },
+    {
+      "mes": "2024-12",
+      "total_acidentes": 925,
+      "total_mortos": 101,
+      "total_feridos": 1256
+    },
+    {
+      "mes": "2025-01",
+      "total_acidentes": 751,
+      "total_mortos": 58,
+      "total_feridos": 1073
+    },
+    {
+      "mes": "2025-02",
+      "total_acidentes": 639,
+      "total_mortos": 57,
+      "total_feridos": 746
+    },
+    {
+      "mes": "2025-03",
+      "total_acidentes": 802,
+      "total_mortos": 66,
+      "total_feridos": 965
+    },
+    {
+      "mes": "2025-04",
+      "total_acidentes": 715,
+      "total_mortos": 65,
+      "total_feridos": 868
+    },
+    {
+      "mes": "2025-05",
+      "total_acidentes": 742,
+      "total_mortos": 71,
+      "total_feridos": 933
+    },
+    {
+      "mes": "2025-06",
+      "total_acidentes": 806,
+      "total_mortos": 72,
+      "total_feridos": 978
+    },
+    {
+      "mes": "2025-07",
+      "total_acidentes": 882,
+      "total_mortos": 58,
+      "total_feridos": 1123
+    },
+    {
+      "mes": "2025-08",
+      "total_acidentes": 847,
+      "total_mortos": 60,
+      "total_feridos": 985
+    },
+    {
+      "mes": "2025-09",
+      "total_acidentes": 811,
+      "total_mortos": 62,
+      "total_feridos": 1033
+    },
+    {
+      "mes": "2025-10",
+      "total_acidentes": 840,
+      "total_mortos": 65,
+      "total_feridos": 1059
+    },
+    {
+      "mes": "2025-11",
+      "total_acidentes": 849,
+      "total_mortos": 57,
+      "total_feridos": 1026
+    },
+    {
+      "mes": "2025-12",
+      "total_acidentes": 878,
+      "total_mortos": 73,
+      "total_feridos": 1199
+    }
+  ],
+  "metadata": {
+    "total_meses": 24,
+    "periodo": "2024-01 a 2025-12",
+    "ultima_atualizacao": "2026-02-20 18:40:30"
+  }
+}

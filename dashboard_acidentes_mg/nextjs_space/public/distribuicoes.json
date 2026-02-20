@@ -1,0 +1,161 @@
+{
+  "por_tipo_acidente": [
+    {
+      "tipo": "SaÃ­da de leito carroÃ§Ã¡vel",
+      "total": 3768,
+      "percentual": 19.98
+    },
+    {
+      "tipo": "ColisÃ£o traseira",
+      "total": 3114,
+      "percentual": 16.51
+    },
+    {
+      "tipo": "Tombamento",
+      "total": 2097,
+      "percentual": 11.12
+    },
+    {
+      "tipo": "ColisÃ£o transversal",
+      "total": 1812,
+      "percentual": 9.61
+    },
+    {
+      "tipo": "ColisÃ£o lateral mesmo sentido",
+      "total": 1704,
+      "percentual": 9.04
+    },
+    {
+      "tipo": "ColisÃ£o com objeto",
+      "total": 1581,
+      "percentual": 8.38
+    },
+    {
+      "tipo": "ColisÃ£o frontal",
+      "total": 1193,
+      "percentual": 6.33
+    },
+    {
+      "tipo": "Atropelamento de Pedestre",
+      "total": 745,
+      "percentual": 3.95
+    },
+    {
+      "tipo": "Queda de ocupante de veÃ­culo",
+      "total": 614,
+      "percentual": 3.26
+    },
+    {
+      "tipo": "ColisÃ£o lateral sentido oposto",
+      "total": 571,
+      "percentual": 3.03
+    },
+    {
+      "tipo": "IncÃªndio",
+      "total": 564,
+      "percentual": 2.99
+    },
+    {
+      "tipo": "Capotamento",
+      "total": 415,
+      "percentual": 2.2
+    },
+    {
+      "tipo": "Engavetamento",
+      "total": 308,
+      "percentual": 1.63
+    },
+    {
+      "tipo": "Atropelamento de Animal",
+      "total": 271,
+      "percentual": 1.44
+    },
+    {
+      "tipo": "Eventos atÃ­picos",
+      "total": 64,
+      "percentual": 0.34
+    },
+    {
+      "tipo": "Derramamento de carga",
+      "total": 32,
+      "percentual": 0.17
+    },
+    {
+      "tipo": "Sinistro pessoal de trÃ¢nsito",
+      "total": 5,
+      "percentual": 0.03
+    }
+  ],
+  "por_fase_dia": [
+    {
+      "fase": "Pleno dia",
+      "total": 10838,
+      "percentual": 57.47
+    },
+    {
+      "fase": "Plena Noite",
+      "total": 6001,
+      "percentual": 31.82
+    },
+    {
+      "fase": "Amanhecer",
+      "total": 1024,
+      "percentual": 5.43
+    },
+    {
+      "fase": "Anoitecer",
+      "total": 995,
+      "percentual": 5.28
+    }
+  ],
+  "por_condicao_meteorologica": [
+    {
+      "condicao": "CÃ©u Claro",
+      "total": 11719,
+      "percentual": 62.14
+    },
+    {
+      "condicao": "Nublado",
+      "total": 2883,
+      "percentual": 15.29
+    },
+    {
+      "condicao": "Chuva",
+      "total": 2292,
+      "percentual": 12.15
+    },
+    {
+      "condicao": "Sol",
+      "total": 1126,
+      "percentual": 5.97
+    },
+    {
+      "condicao": "Garoa/Chuvisco",
+      "total": 432,
+      "percentual": 2.29
+    },
+    {
+      "condicao": "Ignorado",
+      "total": 234,
+      "percentual": 1.24
+    },
+    {
+      "condicao": "Nevoeiro/Neblina",
+      "total": 127,
+      "percentual": 0.67
+    },
+    {
+      "condicao": "Vento",
+      "total": 44,
+      "percentual": 0.23
+    },
+    {
+      "condicao": "Neve",
+      "total": 1,
+      "percentual": 0.01
+    }
+  ],
+  "metadata": {
+    "ultima_atualizacao": "2026-02-20 18:40:30"
+  }
+}
