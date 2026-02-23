@@ -15,7 +15,7 @@ const DistributionCharts = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch('/data/distribuicoes.json');
+        const res = await fetch('http://localhost:8000/api/distribuicoes');
         const jsonData = await res.json();
         
         setPorTipo(

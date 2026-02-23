@@ -53,7 +53,7 @@ def calcular_distribuicao(df, coluna, nome_categoria):
     return resultado
 
 
-def process_distribuicoes():
+def process_distribuicoes(save=True):
     """
     Processa distribuições por tipo, fase e clima
     Gera arquivo distribuicoes.json
@@ -78,8 +78,8 @@ def process_distribuicoes():
         }
     }
     
-    # Salvar JSON
-    save_json(resultado, 'distribuicoes.json')
+    if save:
+        save_json(resultado, 'distribuicoes.json')
     
     return resultado
 

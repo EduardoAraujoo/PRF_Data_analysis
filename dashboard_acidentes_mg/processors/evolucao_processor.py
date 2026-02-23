@@ -10,7 +10,7 @@ import numpy as np
 from utils import load_data, save_json, get_month_year
 
 
-def process_evolucao_mensal():
+def process_evolucao_mensal(save=True):
     """
     Processa evolução mensal de acidentes e mortos
     Gera arquivo evolucao_mensal.json
@@ -55,8 +55,8 @@ def process_evolucao_mensal():
         }
     }
     
-    # Salvar JSON
-    save_json(resultado, 'evolucao_mensal.json')
+    if save:
+        save_json(resultado, 'evolucao_mensal.json')
     
     return resultado
 

@@ -10,7 +10,7 @@ import numpy as np
 from utils import load_data, save_json, clean_string, calculate_severity_index
 
 
-def process_areas_criticas():
+def process_areas_criticas(save=True):
     """
     Processa áreas críticas (maior índice de gravidade e taxa de mortalidade)
     Gera arquivo areas_criticas.json
@@ -114,8 +114,8 @@ def process_areas_criticas():
         }
     }
     
-    # Salvar JSON
-    save_json(resultado, 'areas_criticas.json')
+    if save:
+        save_json(resultado, 'areas_criticas.json')
     
     return resultado
 

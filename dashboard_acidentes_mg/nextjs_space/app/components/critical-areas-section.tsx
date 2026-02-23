@@ -11,7 +11,7 @@ const CriticalAreasSection = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch('/data/areas_criticas.json');
+        const res = await fetch('http://localhost:8000/api/areas-criticas');
         const jsonData = await res.json();
         
         setMunicipiosCriticos(jsonData?.municipios_criticos?.dados ?? []);

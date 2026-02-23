@@ -25,8 +25,8 @@ const KPISection = () => {
     const loadData = async () => {
       try {
         const [kpisRes, evolucaoRes] = await Promise.all([
-          fetch('/data/kpis.json'),
-          fetch('/data/evolucao_mensal.json'),
+          fetch('http://localhost:8000/api/kpis'),
+          fetch('http://localhost:8000/api/evolucao'),
         ]);
 
         const kpisData = await kpisRes.json();

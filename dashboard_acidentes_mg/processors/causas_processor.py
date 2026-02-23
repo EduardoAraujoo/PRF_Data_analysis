@@ -10,7 +10,7 @@ import numpy as np
 from utils import load_data, save_json, clean_string
 
 
-def process_causas():
+def process_causas(save=True):
     """
     Processa causas de acidentes
     Gera arquivo causas.json
@@ -65,8 +65,8 @@ def process_causas():
         }
     }
     
-    # Salvar JSON
-    save_json(resultado, 'causas.json')
+    if save:
+        save_json(resultado, 'causas.json')
     
     return resultado
 

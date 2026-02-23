@@ -11,7 +11,7 @@ const RankingsSection = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch('/data/rankings.json');
+        const res = await fetch('http://localhost:8000/api/rankings');
         const jsonData = await res.json();
         
         setMunicipios(jsonData?.top_municipios ?? []);

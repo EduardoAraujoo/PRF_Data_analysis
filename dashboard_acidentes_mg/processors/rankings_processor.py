@@ -10,7 +10,7 @@ import numpy as np
 from utils import load_data, save_json, clean_string
 
 
-def process_rankings():
+def process_rankings(save=True):
     """
     Processa rankings de municípios e BRs
     Gera arquivo rankings.json
@@ -87,8 +87,8 @@ def process_rankings():
         }
     }
     
-    # Salvar JSON
-    save_json(resultado, 'rankings.json')
+    if save:
+        save_json(resultado, 'rankings.json')
     
     return resultado
 

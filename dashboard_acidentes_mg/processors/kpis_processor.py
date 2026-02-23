@@ -17,7 +17,7 @@ from utils import (
 )
 
 
-def process_kpis():
+def process_kpis(save=True):
     """
     Processa KPIs principais e tendências
     Gera arquivo kpis.json
@@ -148,8 +148,8 @@ def process_kpis():
         }
     }
     
-    # Salvar JSON
-    save_json(kpis, 'kpis.json')
+    if save:
+        save_json(kpis, 'kpis.json')
     
     return kpis
 

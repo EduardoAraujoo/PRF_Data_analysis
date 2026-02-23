@@ -11,7 +11,7 @@ const EvolutionChart = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch('/data/evolucao_mensal.json');
+        const res = await fetch('http://localhost:8000/api/evolucao');
         const jsonData = await res.json();
         
         // Format data for chart

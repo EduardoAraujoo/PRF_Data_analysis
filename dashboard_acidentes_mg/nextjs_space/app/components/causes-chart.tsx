@@ -13,7 +13,7 @@ const CausesChart = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch('/data/causas.json');
+        const res = await fetch('http://localhost:8000/api/causas');
         const jsonData = await res.json();
         
         // Get top 5 causes for better visualization

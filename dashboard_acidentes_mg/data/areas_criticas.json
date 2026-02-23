@@ -36,19 +36,19 @@
       },
       {
         "posicao": 5,
-        "municipio": "CAMPANARIO",
-        "indice_gravidade": 2.3,
-        "total_acidentes": 27,
-        "total_mortos": 7,
-        "total_feridos": 76
-      },
-      {
-        "posicao": 6,
         "municipio": "SANTA VITORIA",
         "indice_gravidade": 2.3,
         "total_acidentes": 34,
         "total_mortos": 11,
         "total_feridos": 43
+      },
+      {
+        "posicao": 6,
+        "municipio": "CAMPANARIO",
+        "indice_gravidade": 2.3,
+        "total_acidentes": 27,
+        "total_mortos": 7,
+        "total_feridos": 76
       },
       {
         "posicao": 7,
@@ -170,6 +170,6 @@
     ]
   },
   "metadata": {
-    "ultima_atualizacao": "2026-02-20 18:40:31"
+    "ultima_atualizacao": "2026-02-20 21:23:44"
   }
 }
