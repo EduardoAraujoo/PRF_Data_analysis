@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useFilters } from './filters-context';
 import { Calendar, Clock, Cloud, MapPin, X } from 'lucide-react';
 
@@ -27,7 +27,8 @@ export default function FiltersBar() {
         onChange={e => onChange(e.target.value)}
       >
         <option value="">{placeholder}</option>
-        {optionsList.map((opt: any) => (
+        {/* Adicionado o fallback || [] para evitar o erro de map undefined */}
+        {(optionsList || []).map((opt: any) => (
           <option key={opt.value || opt} value={opt.value || opt}>{opt.label || opt}</option>
         ))}
       </select>

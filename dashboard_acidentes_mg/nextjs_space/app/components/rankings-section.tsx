@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFilters } from './filters-context';
@@ -12,7 +12,9 @@ export default function RankingsSection() {
   useEffect(() => {
     fetch(`http://localhost:8000/api/rankings?${queryString}`)
       .then(r => r.json())
-      .then(d => setData(d))
+      .then(d => {
+        if (d && d.top_municipios) setData(d);
+      })
       .catch(err => console.error("Erro Rankings:", err));
   }, [queryString]);
 
@@ -20,13 +22,15 @@ export default function RankingsSection() {
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={items} layout="vertical" margin={{ left: 10, right: 30 }}>
+        <BarChart data={items || []} layout="vertical" margin={{ left: 10, right: 30 }}>
           <CartesianGrid strokeDasharray="3 3" horizontal={false} />
           <XAxis type="number" tick={{ fontSize: 11 }} />
           <YAxis type="category" dataKey={keyName} width={140} tick={{ fontSize: 10 }} />
           <Tooltip />
           <Bar dataKey="total_acidentes" name="Acidentes" radius={[0, 4, 4, 0]}>
-            {items.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+            {items?.map((_: any, i: number) => (
+              <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
