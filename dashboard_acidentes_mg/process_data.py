@@ -10,20 +10,40 @@ def load_data():
     candidates = ["acidentes_mg_dashboard_master.csv", "../Uploads/acidentes_mg_dashboard_master.csv"]
     path = next((p for p in candidates if os.path.exists(p)), None)
     if not path: raise FileNotFoundError("CSV não encontrado")
+    
     df = pd.read_csv(path, sep=None, engine='python', encoding='latin1', on_bad_lines='skip')
+    
+    # Adicionamos os nomes do arquivo novo (sem o _x) ao mapa de conversão
     col_map = {
-        'data_inversa_x': 'data_inversa', 'condicao_metereologica_x': 'condicao_met',
-        'tipo_acidente_x': 'tipo_acidente', 'mortos_x': 'mortos', 'feridos_x': 'feridos',
-        'fase_dia_x': 'fase_dia', 'causa_acidente_x': 'causa', 'municipio_x': 'municipio', 'br_x': 'br'
+        'data_inversa_x': 'data_inversa', 
+        'condicao_metereologica_x': 'condicao_met',
+        'condicao_metereologica': 'condicao_met',  # NOME NOVO
+        'tipo_acidente_x': 'tipo_acidente', 
+        'mortos_x': 'mortos', 
+        'feridos_x': 'feridos',
+        'fase_dia_x': 'fase_dia', 
+        'causa_acidente_x': 'causa',
+        'causa_acidente': 'causa',  # NOME NOVO
+        'municipio_x': 'municipio', 
+        'br_x': 'br'
     }
     df = df.rename(columns=col_map)
-    if 'feridos' not in df.columns and 'feridos_leves_x' in df.columns:
-        df['feridos'] = df['feridos_leves_x'].fillna(0) + df['feridos_graves_x'].fillna(0)
+    
+    # Tratamento para garantir a coluna feridos
+    if 'feridos' not in df.columns:
+        if 'feridos_leves_x' in df.columns:
+            df['feridos'] = df['feridos_leves_x'].fillna(0) + df['feridos_graves_x'].fillna(0)
+        elif 'feridos_leves' in df.columns:
+            df['feridos'] = df['feridos_leves'].fillna(0) + df['feridos_graves'].fillna(0)
+        else:
+            df['feridos'] = 0
+            
     df['mortos'] = pd.to_numeric(df['mortos'], errors='coerce').fillna(0)
     df['feridos'] = pd.to_numeric(df['feridos'], errors='coerce').fillna(0)
     df['data_inversa'] = pd.to_datetime(df['data_inversa'], errors='coerce')
     df['ano'] = df['data_inversa'].dt.year.astype('Int64').astype(str).replace('<NA>', '')
     df['mes_num'] = df['data_inversa'].dt.month.astype('Int64')
+    
     return df
 
 df_master = load_data()
