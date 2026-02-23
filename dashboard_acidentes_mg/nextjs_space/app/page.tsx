@@ -12,23 +12,29 @@ import { FiltersProvider } from './components/filters-context';
 export default function Home() {
   return (
     <FiltersProvider>
-      <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-        <div className="mb-4 flex items-start justify-between">
+      <div className="w-full min-h-screen bg-gray-50 p-4 md:p-8 space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard de Acidentes de Trânsito</h1>
-            <p className="text-gray-600 mt-1">Análise completa de acidentes em Minas Gerais</p>
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Dashboard de Acidentes de Trânsito</h1>
+            <p className="text-gray-500 mt-1">Análise estratégica de ocorrências em Minas Gerais</p>
           </div>
           <UploadButton />
         </div>
-        <FiltersBar />
-        <KPISection />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2"><EvolutionChart /></div>
-          <div className="lg:col-span-1"><CausesChart /></div>
+        
+        <div className="w-full">
+          <FiltersBar />
         </div>
-        <DistributionCharts />
-        <RankingsSection />
-        <CriticalAreasSection />
+
+        <KPISection />
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="xl:col-span-2 w-full"><EvolutionChart /></div>
+          <div className="xl:col-span-1 w-full"><CausesChart /></div>
+        </div>
+
+        <div className="w-full"><DistributionCharts /></div>
+        <div className="w-full"><RankingsSection /></div>
+        <div className="w-full"><CriticalAreasSection /></div>
       </div>
     </FiltersProvider>
   );

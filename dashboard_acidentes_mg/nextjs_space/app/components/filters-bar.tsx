@@ -1,6 +1,6 @@
 'use client';
 import { useFilters } from './filters-context';
-import { Calendar, Clock, Cloud, MapPin, Filter, X } from 'lucide-react';
+import { Calendar, Clock, Cloud, MapPin, X } from 'lucide-react';
 
 const MESES = [
   { value: '1', label: 'Jan' }, { value: '2', label: 'Fev' }, { value: '3', label: 'Mar' },
@@ -16,13 +16,13 @@ export default function FiltersBar() {
   const hasFilters = Object.values(filters).some(v => v !== '');
 
   const FilterCard = ({ icon: Icon, label, value, onChange, optionsList, placeholder }: any) => (
-    <div className="flex flex-col min-w-[140px] bg-white p-2 rounded-lg border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-1 text-gray-400">
-        <Icon size={14} />
-        <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+    <div className="flex-1 min-w-[160px] bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:border-purple-200 transition-all">
+      <div className="flex items-center gap-2 mb-1.5 text-gray-400">
+        <Icon size={14} className="text-purple-500" />
+        <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
       </div>
       <select 
-        className="text-sm font-medium bg-transparent outline-none text-gray-700 cursor-pointer"
+        className="w-full text-sm font-semibold bg-transparent outline-none text-gray-700 cursor-pointer appearance-none"
         value={value} 
         onChange={e => onChange(e.target.value)}
       >
@@ -35,16 +35,16 @@ export default function FiltersBar() {
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-3 mb-6">
-      <FilterCard icon={Calendar} label="Ano" value={filters.ano} onChange={(v:any) => update('ano', v)} optionsList={options.anos} placeholder="Todos" />
-      <FilterCard icon={Calendar} label="Mês" value={filters.mes} onChange={(v:any) => update('mes', v)} optionsList={MESES} placeholder="Todos" />
-      <FilterCard icon={Clock} label="Fase do Dia" value={filters.fase_dia} onChange={(v:any) => update('fase_dia', v)} optionsList={options.fases_dia} placeholder="Todas" />
-      <FilterCard icon={MapPin} label="Tipo" value={filters.tipo_acidente} onChange={(v:any) => update('tipo_acidente', v)} optionsList={options.tipos_acidente} placeholder="Todos" />
-      <FilterCard icon={Cloud} label="Clima" value={filters.condicao_met} onChange={(v:any) => update('condicao_met', v)} optionsList={options.condicoes_meteorologicas} placeholder="Todos" />
+    <div className="w-full flex flex-wrap items-center gap-4">
+      <FilterCard icon={Calendar} label="Ano" value={filters.ano} onChange={(v:any) => update('ano', v)} optionsList={options.anos} placeholder="Todos os Anos" />
+      <FilterCard icon={Calendar} label="Mês" value={filters.mes} onChange={(v:any) => update('mes', v)} optionsList={MESES} placeholder="Todos os Meses" />
+      <FilterCard icon={Clock} label="Fase do Dia" value={filters.fase_dia} onChange={(v:any) => update('fase_dia', v)} optionsList={options.fases_dia} placeholder="Todas as Fases" />
+      <FilterCard icon={MapPin} label="Tipo" value={filters.tipo_acidente} onChange={(v:any) => update('tipo_acidente', v)} optionsList={options.tipos_acidente} placeholder="Todos os Tipos" />
+      <FilterCard icon={Cloud} label="Clima" value={filters.condicao_met} onChange={(v:any) => update('condicao_met', v)} optionsList={options.condicoes_meteorologicas} placeholder="Todas as Condições" />
       
       {hasFilters && (
-        <button onClick={clear} className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-          <X size={14} /> LIMPAR
+        <button onClick={clear} className="flex items-center gap-2 px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-100 transition-all">
+          <X size={16} /> LIMPAR
         </button>
       )}
     </div>
