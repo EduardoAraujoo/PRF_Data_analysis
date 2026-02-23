@@ -1,129 +1,57 @@
 'use client';
-
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Clock, Cloud, AlertTriangle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
+import { useFilters } from './filters-context';
 
-const COLORS = ['#8B5CF6', '#06B6D4', '#FCD34D', '#FF6B9D', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
+const COLORS = ['#8b5cf6','#06b6d4','#f59e0b','#10b981','#ef4444','#3b82f6','#ec4899','#84cc16'];
 
-const DistributionCharts = () => {
-  const [porTipo, setPorTipo] = useState<any[]>([]);
-  const [porFase, setPorFase] = useState<any[]>([]);
-  const [porCondicao, setPorCondicao] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function DistributionCharts() {
+  const [data, setData] = useState<any>({ por_tipo_acidente: [], por_fase_dia: [], por_condicao_meteorologica: [] });
+  const { queryString } = useFilters();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/api/distribuicoes');
-        const jsonData = await res.json();
-        
-        setPorTipo(
-          jsonData?.por_tipo_acidente?.slice?.(0, 8)?.map?.((item: any) => ({
-            name: item?.tipo?.substring?.(0, 25) ?? '',
-            value: item?.total ?? 0,
-          })) ?? []
-        );
-        
-        setPorFase(
-          jsonData?.por_fase_dia?.map?.((item: any) => ({
-            name: item?.fase ?? '',
-            value: item?.total ?? 0,
-          })) ?? []
-        );
-        
-        setPorCondicao(
-          jsonData?.por_condicao_meteorologica?.slice?.(0, 6)?.map?.((item: any) => ({
-            name: item?.condicao ?? '',
-            value: item?.total ?? 0,
-          })) ?? []
-        );
-      } catch (error) {
-        console.error('Erro ao carregar distribuições:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetch(`http://localhost:8000/api/distribuicoes?${queryString}`)
+      .then(r => r.json())
+      .then(d => setData(d))
+      .catch(err => console.error("Erro Distribuições:", err));
+  }, [queryString]);
 
-    loadData();
-  }, []);
+  const BarCard = ({ title, items }: { title: string; items: any[] }) => (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={items} layout="vertical" margin={{ left: 10, right: 20 }}>
+          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+          <XAxis type="number" tick={{ fontSize: 11 }} />
+          <YAxis type="category" dataKey="name" width={150} tick={{ fontSize: 10 }} />
+          <Tooltip />
+          <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+            {items.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
 
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-xl shadow-sm p-6 h-80 animate-pulse" />
-        ))}
-      </div>
-    );
-  }
-
-  const ChartCard = ({ title, icon: Icon, data, color }: any) => (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}20` }}>
-            <Icon className="w-5 h-5" style={{ color }} />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-        </div>
-      </div>
-      <div className="p-6">
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, left: 5, bottom: 5 }}>
-            <XAxis type="number" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-            <YAxis
-              type="category"
-              dataKey="name"
-              tick={{ fontSize: 10 }}
-              tickLine={false}
-              axisLine={false}
-              width={100}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '11px',
-              }}
-            />
-            <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-              {data?.map?.((entry: any, index: number) => (
-                <Cell key={`cell-${index}`} fill={COLORS?.[index % COLORS?.length] ?? COLORS[0]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+  const PieCard = ({ title, items }: { title: string; items: any[] }) => (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie data={items} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent*100).toFixed(0)}%`}>
+            {items.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Distribuições</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ChartCard
-          title="Por Tipo de Acidente"
-          icon={AlertTriangle}
-          data={porTipo}
-          color="#8B5CF6"
-        />
-        <ChartCard
-          title="Por Fase do Dia"
-          icon={Clock}
-          data={porFase}
-          color="#FCD34D"
-        />
-        <ChartCard
-          title="Por Condição Meteorológica"
-          icon={Cloud}
-          data={porCondicao}
-          color="#06B6D4"
-        />
-      </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <BarCard title="Por Tipo de Acidente" items={data.por_tipo_acidente} />
+      <PieCard title="Por Fase do Dia" items={data.por_fase_dia} />
+      <BarCard title="Por Condição Meteorológica" items={data.por_condicao_meteorologica} />
     </div>
   );
-};
-
-export default DistributionCharts;
+}

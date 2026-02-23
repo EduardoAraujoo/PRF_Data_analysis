@@ -1,124 +1,42 @@
 'use client';
-
 import { useEffect, useState } from 'react';
-import { MapPin, Navigation } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useFilters } from './filters-context';
 
-const RankingsSection = () => {
-  const [municipios, setMunicipios] = useState<any[]>([]);
-  const [brs, setBrs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const COLORS = ['#8b5cf6','#a78bfa','#c4b5fd','#ddd6fe','#ede9fe','#7c3aed','#6d28d9','#5b21b6','#4c1d95','#3b0764'];
+
+export default function RankingsSection() {
+  const [data, setData] = useState<any>({ top_municipios: [], top_brs: [] });
+  const { queryString } = useFilters();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/api/rankings');
-        const jsonData = await res.json();
-        
-        setMunicipios(jsonData?.top_municipios ?? []);
-        setBrs(jsonData?.top_brs ?? []);
-      } catch (error) {
-        console.error('Erro ao carregar rankings:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetch(`http://localhost:8000/api/rankings?${queryString}`)
+      .then(r => r.json())
+      .then(d => setData(d))
+      .catch(err => console.error("Erro Rankings:", err));
+  }, [queryString]);
 
-    loadData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded w-1/4 animate-pulse" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm p-6 h-96 animate-pulse" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const RankingCard = ({ title, icon: Icon, data, type, color }: any) => (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}20` }}>
-            <Icon className="w-5 h-5" style={{ color }} />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-        </div>
-      </div>
-
-      <div className="p-6">
-        <div className="space-y-3">
-          {data?.map?.((item: any, index: number) => {
-            const maxAcidentes = data?.[0]?.total_acidentes ?? 1;
-            const percentage = ((item?.total_acidentes ?? 0) / maxAcidentes) * 100;
-
-            return (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                      style={{ backgroundColor: index < 3 ? color : '#9CA3AF' }}
-                    >
-                      {item?.posicao ?? index + 1}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {type === 'municipio' ? item?.municipio : `BR-${item?.br}`}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {item?.total_mortos ?? 0} mortos • {item?.total_feridos ?? 0} feridos
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-gray-900">
-                      {item?.total_acidentes?.toLocaleString?.('pt-BR') ?? '0'}
-                    </p>
-                    <p className="text-xs text-gray-500">acidentes</p>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div
-                    className="h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${percentage}%`, backgroundColor: color }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+  const RankCard = ({ title, items, keyName }: { title: string; items: any[]; keyName: string }) => (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={items} layout="vertical" margin={{ left: 10, right: 30 }}>
+          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+          <XAxis type="number" tick={{ fontSize: 11 }} />
+          <YAxis type="category" dataKey={keyName} width={140} tick={{ fontSize: 10 }} />
+          <Tooltip />
+          <Bar dataKey="total_acidentes" name="Acidentes" radius={[0, 4, 4, 0]}>
+            {items.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Rankings</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RankingCard
-          title="Top 10 Municípios"
-          icon={MapPin}
-          data={municipios}
-          type="municipio"
-          color="#8B5CF6"
-        />
-        <RankingCard
-          title="Top 10 BRs"
-          icon={Navigation}
-          data={brs}
-          type="br"
-          color="#FF6B9D"
-        />
-      </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <RankCard title="Top 10 Municípios" items={data.top_municipios} keyName="municipio" />
+      <RankCard title="Top 10 BRs" items={data.top_brs} keyName="br" />
     </div>
   );
-};
-
-export default RankingsSection;
+}

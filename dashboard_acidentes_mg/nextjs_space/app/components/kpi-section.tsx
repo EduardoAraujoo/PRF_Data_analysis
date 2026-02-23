@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import KPICard from './kpi-card';
+import { useFilters } from './filters-context';
 
 interface KPI {
   id: string;
@@ -17,6 +18,7 @@ interface KPI {
 }
 
 const KPISection = () => {
+  const { queryString: qs } = useFilters();
   const [kpis, setKpis] = useState<KPI[]>([]);
   const [evolucao, setEvolucao] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,8 +27,8 @@ const KPISection = () => {
     const loadData = async () => {
       try {
         const [kpisRes, evolucaoRes] = await Promise.all([
-          fetch('http://localhost:8000/api/kpis'),
-          fetch('http://localhost:8000/api/evolucao'),
+          fetch(`http://localhost:8000/api/kpis${qs ? '?' + qs : ''}`),
+          fetch(`http://localhost:8000/api/evolucao${qs ? '?' + qs : ''}`),
         ]);
 
         const kpisData = await kpisRes.json();
@@ -42,7 +44,7 @@ const KPISection = () => {
     };
 
     loadData();
-  }, []);
+  }, [qs]);
 
   if (loading) {
     return (

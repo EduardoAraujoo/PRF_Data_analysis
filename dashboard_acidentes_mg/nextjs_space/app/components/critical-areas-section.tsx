@@ -1,145 +1,52 @@
 'use client';
-
 import { useEffect, useState } from 'react';
-import { AlertTriangle, MapPin, Navigation, Skull } from 'lucide-react';
+import { useFilters } from './filters-context';
 
-const CriticalAreasSection = () => {
-  const [municipiosCriticos, setMunicipiosCriticos] = useState<any[]>([]);
-  const [brsCriticas, setBrsCriticas] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function CriticalAreasSection() {
+  const [data, setData] = useState<any>({ municipios_criticos: { dados: [] }, brs_criticas: { dados: [] } });
+  const { queryString } = useFilters();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/api/areas-criticas');
-        const jsonData = await res.json();
-        
-        setMunicipiosCriticos(jsonData?.municipios_criticos?.dados ?? []);
-        setBrsCriticas(jsonData?.brs_criticas?.dados ?? []);
-      } catch (error) {
-        console.error('Erro ao carregar áreas críticas:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetch(`http://localhost:8000/api/areas-criticas?${queryString}`)
+      .then(r => r.json())
+      .then(d => setData(d))
+      .catch(err => console.error("Erro Áreas Críticas:", err));
+  }, [queryString]);
 
-    loadData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded w-1/4 animate-pulse" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm p-6 h-96 animate-pulse" />
+  const Table = ({ title, items, keyName }: { title: string; items: any[]; keyName: string }) => (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-gray-500 border-b">
+            <th className="pb-2">Local</th>
+            <th className="pb-2 text-right">Acidentes</th>
+            <th className="pb-2 text-right">Mortos</th>
+            <th className="pb-2 text-right">Índice</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item: any, i: number) => (
+            <tr key={i} className="border-b border-gray-50 hover:bg-gray-50">
+              <td className="py-2 font-medium text-gray-700">{item[keyName]}</td>
+              <td className="py-2 text-right text-gray-600">{item.total_acidentes?.toLocaleString('pt-BR')}</td>
+              <td className="py-2 text-right text-red-600 font-medium">{item.total_mortos?.toLocaleString('pt-BR')}</td>
+              <td className="py-2 text-right">
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${item.indice_gravidade > 2 ? 'bg-red-100 text-red-700' : item.indice_gravidade > 1 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
+                  {item.indice_gravidade?.toFixed(2)}
+                </span>
+              </td>
+            </tr>
           ))}
-        </div>
-      </div>
-    );
-  }
-
-  const getSeverityColor = (value: number) => {
-    if (value >= 2.5) return '#EF4444'; // red
-    if (value >= 2.0) return '#F59E0B'; // orange
-    return '#FCD34D'; // yellow
-  };
-
-  const getMortalityColor = (value: number) => {
-    if (value >= 10) return '#EF4444'; // red
-    if (value >= 7) return '#F59E0B'; // orange
-    return '#FCD34D'; // yellow
-  };
-
-  const CriticalCard = ({ title, subtitle, icon: Icon, data, type }: any) => (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-red-100 rounded-lg">
-            <Icon className="w-5 h-5 text-red-600" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-            <p className="text-xs text-gray-500">{subtitle}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-6">
-        <div className="space-y-4">
-          {data?.map?.((item: any, index: number) => {
-            const value = type === 'gravidade' ? item?.indice_gravidade : item?.taxa_mortalidade;
-            const color = type === 'gravidade' ? getSeverityColor(value ?? 0) : getMortalityColor(value ?? 0);
-
-            return (
-              <div
-                key={index}
-                className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:border-red-200 transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                    style={{ backgroundColor: color }}
-                  >
-                    {item?.posicao ?? index + 1}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      {type === 'gravidade' ? item?.municipio : `BR-${item?.br}`}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {item?.total_acidentes ?? 0} acidentes • {item?.total_mortos ?? 0} mortos
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color }}
-                  >
-                    {value?.toFixed?.(2) ?? '0'}
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {type === 'gravidade' ? 'Índice' : 'Taxa %'}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <AlertTriangle className="w-8 h-8 text-red-600" />
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Áreas Críticas</h2>
-          <p className="text-sm text-gray-500">Locais de maior risco e gravidade</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <CriticalCard
-          title="Municípios Críticos"
-          subtitle="Maior índice de gravidade"
-          icon={MapPin}
-          data={municipiosCriticos}
-          type="gravidade"
-        />
-        <CriticalCard
-          title="BRs Críticas"
-          subtitle="Maior taxa de mortalidade"
-          icon={Skull}
-          data={brsCriticas}
-          type="mortalidade"
-        />
-      </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Table title="Municípios Críticos" items={data.municipios_criticos?.dados || []} keyName="municipio" />
+      <Table title="BRs Críticas" items={data.brs_criticas?.dados || []} keyName="br" />
     </div>
   );
-};
-
-export default CriticalAreasSection;
+}

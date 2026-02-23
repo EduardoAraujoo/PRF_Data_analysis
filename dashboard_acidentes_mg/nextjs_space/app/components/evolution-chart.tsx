@@ -3,15 +3,17 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp } from 'lucide-react';
+import { useFilters } from './filters-context';
 
 const EvolutionChart = () => {
+  const { queryString: qs } = useFilters();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/evolucao');
+        const res = await fetch(`http://localhost:8000/api/evolucao${qs ? '?' + qs : ''}`);
         const jsonData = await res.json();
         
         // Format data for chart
@@ -31,7 +33,7 @@ const EvolutionChart = () => {
     };
 
     loadData();
-  }, []);
+  }, [qs]);
 
   if (loading) {
     return (
