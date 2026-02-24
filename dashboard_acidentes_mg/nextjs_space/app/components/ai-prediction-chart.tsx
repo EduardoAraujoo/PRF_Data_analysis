@@ -1,81 +1,35 @@
 ﻿'use client';
 import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Brain } from 'lucide-react';
+import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine, Label } from 'recharts';
+import { Brain, Activity, BookOpen, SlidersHorizontal } from 'lucide-react';
 
 const AIPredictionChart = () => {
   const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [reduction, setReduction] = useState(0);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/predict/lstm')
-      .then(res => res.json())
-      .then(json => {
-        const hist = json.historico.map((d: any) => ({ ...d, valor: d.acidentes, tipo: 'Histórico' }));
-        const pred = json.previsao_30_dias.map((d: any) => ({ ...d, valor: d.predicao, tipo: 'Previsão' }));
-        setData({ 
-          chart: [...hist, ...pred], 
-          metrics: { mae: json.mae, rmse: json.rmse } 
-        });
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Erro ao carregar IA:", err);
-        setLoading(false);
-      });
-  }, []);
+    const factor = 1 - (reduction / 100);
+    fetch(`http://localhost:8000/api/predict/lstm?factor=${factor}`).then(res => res.json()).then(json => {
+      const hist = (json.historico || []).map((d: any) => ({ ...d, valor: d.acidentes, tipo: 'Histórico' }));
+      const prev = (json.previsao || []).map((d: any) => ({ ...d, valor: d.predicao, tipo: 'Previsão', min: d.predicao - 5, max: d.predicao + 5 }));
+      setData({ chart: [...hist, ...prev], metrics: json.metrics });
+    });
+  }, [reduction]);
 
-  if (loading) return (
-    <div className="h-96 flex items-center justify-center bg-white rounded-xl border border-dashed border-gray-300">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-        <p className="text-gray-500 font-medium">Processando Redes Neurais (LSTM)...</p>
-      </div>
-    </div>
-  );
-
-  if (!data) return null;
+  if (!data) return <div className="p-10 text-center font-bold text-purple-600">Sincronizando Dados 2026...</div>;
 
   return (
-    <div id="ia" className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6 scroll-mt-20">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
-            <Brain className="w-6 h-6" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">Previsão com Deep Learning</h3>
-            <p className="text-sm text-gray-500">Tendência de acidentes para os próximos 30 dias</p>
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="text-right">
-            <p className="text-[10px] text-gray-400 uppercase font-bold">MAE</p>
-            <p className="text-lg font-mono text-purple-600">{data.metrics.mae}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] text-gray-400 uppercase font-bold">RMSE</p>
-            <p className="text-lg font-mono text-blue-600">{data.metrics.rmse}</p>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4"><Brain className="text-purple-600 w-8 h-8" /><div><h4 className="font-bold text-sm">Lógica LSTM</h4><p className="text-[10px] text-gray-500">Rede neural temporal.</p></div></div>
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4"><Activity className="text-cyan-500 w-8 h-8" /><div><h4 className="font-bold text-sm">Nuvem de Incerteza</h4><p className="text-[10px] text-gray-500">Sombra indica margem de erro.</p></div></div>
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4"><BookOpen className="text-blue-600 w-8 h-8" /><div><h4 className="font-bold text-sm">Dicionário</h4><p className="text-[10px] text-gray-500">MAE: Erro Médio Absoluto.</p></div></div>
       </div>
-      <div className="h-80 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data.chart}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis dataKey="date" hide />
-            <YAxis fontSize={12} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
-            <Legend verticalAlign="top" align="right" iconType="circle" />
-            <Line name="Histórico Real" type="monotone" dataKey="valor" stroke="#8b5cf6" strokeWidth={3} dot={false} 
-                  data={data.chart.filter((d: any) => d.tipo === 'Histórico')} />
-            <Line name="Previsão IA" type="monotone" dataKey="valor" stroke="#22d3ee" strokeWidth={3} strokeDasharray="5 5" 
-                  dot={{ r: 4, fill: '#22d3ee' }} data={data.chart.filter((d: any) => d.tipo === 'Previsão')} />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="bg-white p-6 rounded-xl border shadow-sm">
+        <div className="flex justify-between items-center mb-4"><span className="text-xs font-bold">STATUS: {data.metrics.risk_level}</span><input type="range" min="0" max="50" value={reduction} onChange={(e)=>setReduction(parseInt(e.target.value))} className="accent-purple-600" /></div>
+        <div className="h-80"><ResponsiveContainer><ComposedChart data={data.chart}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="date" hide /><YAxis fontSize={12} /><Tooltip /><Area type="monotone" dataKey="max" baseValue="min" stroke="none" fill="#22d3ee" fillOpacity={0.15} /><Line type="monotone" dataKey="valor" stroke="#8b5cf6" strokeWidth={3} dot={false} data={data.chart.filter((d:any)=>d.tipo==='Histórico')} /><Line type="monotone" dataKey="valor" stroke="#22d3ee" strokeWidth={3} strokeDasharray="5 5" dot={false} data={data.chart.filter((d:any)=>d.tipo==='Previsão')} /></ComposedChart></ResponsiveContainer></div>
       </div>
     </div>
   );
 };
-
 export default AIPredictionChart;
