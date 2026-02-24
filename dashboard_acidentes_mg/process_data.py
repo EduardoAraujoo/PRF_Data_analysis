@@ -1,9 +1,11 @@
+from backend.routes.lstm_routes import router as lstm_router
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
 app = FastAPI()
+app.include_router(lstm_router)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 def load_data():
