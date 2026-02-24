@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import KPISection from './components/kpi-section';
 import EvolutionChart from './components/evolution-chart';
 import CausesChart from './components/causes-chart';
@@ -28,13 +28,13 @@ export default function Home() {
         <KPISection />
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 w-full"><EvolutionChart /></div>
-          <div className="xl:col-span-1 w-full"><CausesChart /></div>
+          <div className="xl:col-span-2 w-full" id="evolucao"><EvolutionChart /></div>
+          <div className="xl:col-span-1 w-full" id="causas"><CausesChart /></div>
         </div>
 
         <div className="w-full"><DistributionCharts /></div>
-        <div className="w-full"><RankingsSection /></div>
-        <div className="w-full"><CriticalAreasSection /></div>
+        <div className="w-full" id="rankings"><RankingsSection /></div>
+        <div className="w-full" id="areas"><CriticalAreasSection /></div>
       </div>
     </FiltersProvider>
   );
