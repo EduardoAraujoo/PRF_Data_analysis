@@ -137,6 +137,63 @@ async def get_areas(ano: str = None, mes: str = None, condicao_met: str = None, 
         "brs_criticas": {"dados": brs.sort_values('indice_gravidade', ascending=False).head(5).to_dict(orient='records')}
     }
 
+@app.get("/api/distribuicao-km")
+async def get_distribuicao_km(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None, br: str = None):
+    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
+    
+    # FILTRO DE BR CORRIGIDO E ROBUSTO
+    if br:
+        # Pega a BR selecionada, remove o "0" da frente se houver e tira ".0"
+        filtro_br = str(br).replace('.0', '').lstrip('0').strip()
+        # Faz a mesma limpeza na coluna do dataframe antes de comparar
+        dff_br_limpa = dff['br'].astype(str).str.replace('.0', '', regex=False).str.lstrip('0').str.strip()
+        
+        dff = dff[dff_br_limpa == filtro_br]
+        
+    col_km = next((col for col in ['km_x', 'km', 'quilometro'] if col in dff.columns), None)
+    
+    if not col_km or dff.empty:
+        return {"faixas_km": []}
+        
+    dff['km_limpo'] = dff[col_km].astype(str).str.replace(',', '.').str.strip()
+    dff['km_limpo'] = pd.to_numeric(dff['km_limpo'], errors='coerce')
+    df_valid = dff.dropna(subset=['km_limpo']).copy()
+    
+    if df_valid.empty:
+        return {"faixas_km": []}
+        
+    max_km = int(df_valid['km_limpo'].max()) + 10
+    bins = list(range(0, max_km, 10))
+    labels = [f"{i} - {i+10}" for i in range(0, max_km-10, 10)]
+    
+    df_valid['faixa_km'] = pd.cut(df_valid['km_limpo'], bins=bins, labels=labels, right=False)
+    
+    resultados = []
+    
+    for faixa, group in df_valid.groupby('faixa_km', observed=False):
+        if group.empty:
+            continue
+            
+        total_acidentes = int(len(group))
+        mortos = float(group['mortos'].sum())
+        feridos = float(group['feridos'].sum())
+        
+        severidade = round((mortos * 13) + (feridos * 3), 2)
+        
+        causas_count = group['causa'].value_counts()
+        causa_predominante = causas_count.index[0] if not causas_count.empty else "Não Informado"
+        top_causas = causas_count.head(3).to_dict()
+        
+        resultados.append({
+            "faixa_km": str(faixa),
+            "total_acidentes": total_acidentes,
+            "indice_severidade": severidade,
+            "causa_predominante": str(causa_predominante),
+            "causas_detalhadas": {str(k): int(v) for k, v in top_causas.items()}
+        })
+        
+    return {"faixas_km": resultados}
+    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

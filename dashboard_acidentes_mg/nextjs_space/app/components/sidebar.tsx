@@ -1,5 +1,5 @@
 ﻿'use client';
-import { Home, BarChart3, MapPin, AlertTriangle, TrendingUp, Settings, Brain } from 'lucide-react';
+import { Home, BarChart3, MapPin, AlertTriangle, TrendingUp, Settings, Brain, Map } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -12,6 +12,7 @@ const Sidebar = () => {
     { name: 'Causas', icon: BarChart3, href: '/#causas', active: false },
     { name: 'Áreas Críticas', icon: AlertTriangle, href: '/#areas', active: false },
     { name: 'Rankings', icon: MapPin, href: '/#rankings', active: false },
+    { name: 'Análise por KM', icon: Map, href: '/analise-km', active: pathname === '/analise-km' },
     { name: 'Predições IA', icon: Brain, href: '/ia', active: pathname === '/ia' },
     { name: 'Configurações', icon: Settings, href: '#settings', active: false },
   ];

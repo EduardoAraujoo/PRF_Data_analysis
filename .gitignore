@@ -3,3 +3,19 @@ node_modules/
 *.pack.gz
 __pycache__/
 *.csv
+
+# Virtual env
+venv/
+venv_ml/
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node
+node_modules/
+.next/
+.env

@@ -1,7 +1,15 @@
 ﻿'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export interface Filters { ano: string; mes: string; condicao_met: string; tipo_acidente: string; fase_dia: string; }
+// Exemplo de como deve ficar a sua interface:
+export interface Filters {
+  ano?: string;
+  mes?: string;
+  condicao_met?: string;
+  tipo_acidente?: string;
+  fase_dia?: string;
+  br?: string; 
+}
 interface Options { anos: string[]; condicoes_meteorologicas: string[]; tipos_acidente: string[]; fases_dia: string[]; }
 interface FiltersContextType { filters: Filters; setFilters: (f: Filters) => void; queryString: string; options: Options; }
 
