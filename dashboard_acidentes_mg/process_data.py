@@ -3,67 +3,88 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import numpy as np
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 app.include_router(lstm_router)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 def load_data():
+    """Lê o CSV e extrai apenas as colunas necessárias, evitando duplicatas."""
     candidates = ["acidentes_mg_dashboard_master.csv", "../Uploads/acidentes_mg_dashboard_master.csv"]
     path = next((p for p in candidates if os.path.exists(p)), None)
-    if not path: raise FileNotFoundError("CSV não encontrado")
+    if not path: 
+        raise FileNotFoundError("Dataset CSV não encontrado.")
     
-    df = pd.read_csv(path, sep=None, engine='python', encoding='latin1', on_bad_lines='skip')
+    # Leitura inicial com detecção de delimitador
+    df_raw = pd.read_csv(path, sep=None, engine='python', encoding='latin1', on_bad_lines='skip')
     
-    # Adicionamos os nomes do arquivo novo (sem o _x) ao mapa de conversão
-    col_map = {
-        'data_inversa_x': 'data_inversa', 
-        'condicao_metereologica_x': 'condicao_met',
-        'condicao_metereologica': 'condicao_met',  # NOME NOVO
-        'tipo_acidente_x': 'tipo_acidente', 
-        'mortos_x': 'mortos', 
-        'feridos_x': 'feridos',
-        'fase_dia_x': 'fase_dia', 
-        'causa_acidente_x': 'causa',
-        'causa_acidente': 'causa',  # NOME NOVO
-        'municipio_x': 'municipio', 
-        'br_x': 'br'
-    }
-    df = df.rename(columns=col_map)
+    # Função para buscar a primeira coluna disponível de uma lista de opções
+    def get_best_col(options):
+        for opt in options:
+            if opt in df_raw.columns:
+                return df_raw[opt]
+        return None
+
+    # Criamos um DataFrame novo do zero para garantir que não existam colunas duplicadas
+    df = pd.DataFrame()
     
-    # Tratamento para garantir a coluna feridos
-    if 'feridos' not in df.columns:
-        if 'feridos_leves_x' in df.columns:
-            df['feridos'] = df['feridos_leves_x'].fillna(0) + df['feridos_graves_x'].fillna(0)
-        elif 'feridos_leves' in df.columns:
-            df['feridos'] = df['feridos_leves'].fillna(0) + df['feridos_graves'].fillna(0)
-        else:
-            df['feridos'] = 0
-            
-    df['mortos'] = pd.to_numeric(df['mortos'], errors='coerce').fillna(0)
-    df['feridos'] = pd.to_numeric(df['feridos'], errors='coerce').fillna(0)
+    # Extração seletiva
+    df['data_inversa'] = get_best_col(['data_inversa_x', 'data_inversa_original', 'data_inversa'])
+    df['br'] = get_best_col(['br_x', 'br_original', 'br'])
+    df['km'] = get_best_col(['km_x', 'km_original', 'km'])
+    df['causa'] = get_best_col(['causa_acidente_x', 'causa_acidente', 'causa_principal', 'causa'])
+    df['tipo_acidente'] = get_best_col(['tipo_acidente_x', 'tipo_acidente'])
+    df['fase_dia'] = get_best_col(['fase_dia_x', 'fase_dia'])
+    df['condicao_met'] = get_best_col(['condicao_metereologica_x', 'condicao_metereologica', 'condicao_met'])
+    df['municipio'] = get_best_col(['municipio_x', 'municipio'])
+    df['id'] = df_raw.index # Identificador único baseado na linha
+
+    # Processamento de Vítimas
+    mortos = pd.to_numeric(get_best_col(['mortos_x', 'mortos']), errors='coerce').fillna(0)
+    df['mortos'] = mortos.astype(int)
+    
+    f_leves = pd.to_numeric(get_best_col(['feridos_leves_x', 'feridos_leves']), errors='coerce').fillna(0)
+    f_graves = pd.to_numeric(get_best_col(['feridos_graves_x', 'feridos_graves']), errors='coerce').fillna(0)
+    df['feridos'] = (f_leves + f_graves).astype(int)
+
+    # --- Limpeza e Tipagem ---
+    
+    # Converter datas
     df['data_inversa'] = pd.to_datetime(df['data_inversa'], errors='coerce')
     df['ano'] = df['data_inversa'].dt.year.astype('Int64').astype(str).replace('<NA>', '')
     df['mes_num'] = df['data_inversa'].dt.month.astype('Int64')
     
+    # Padronizar BR (remover .0 e zeros à esquerda)
+    df['br'] = df['br'].astype(str).str.replace(r'\.0$', '', regex=True).str.lstrip('0').str.strip()
+    
     return df
 
 df_master = load_data()
-print(f"✅ CSV carregado: {len(df_master)} linhas | Colunas: {list(df_master.columns)}")
+print(f"✅ CSV carregado com sucesso! Linhas: {len(df_master)}")
 
 def apply_filters(ano=None, mes=None, condicao_met=None, tipo_acidente=None, fase_dia=None):
     dff = df_master.copy()
-    if ano: dff = dff[dff['ano'] == str(ano)]
-    if mes: dff = dff[dff['mes_num'] == int(mes)]
-    if condicao_met: dff = dff[dff['condicao_met'] == condicao_met]
-    if tipo_acidente: dff = dff[dff['tipo_acidente'] == tipo_acidente]
-    if fase_dia: dff = dff[dff['fase_dia'] == fase_dia]
+    if ano and str(ano).strip() != "": dff = dff[dff['ano'] == str(ano)]
+    if mes and str(mes).strip() != "": dff = dff[dff['mes_num'] == int(mes)]
+    if condicao_met and str(condicao_met).strip() != "": dff = dff[dff['condicao_met'] == condicao_met]
+    if tipo_acidente and str(tipo_acidente).strip() != "": dff = dff[dff['tipo_acidente'] == tipo_acidente]
+    if fase_dia and str(fase_dia).strip() != "": dff = dff[dff['fase_dia'] == fase_dia]
     return dff
+
+# --- ROTAS DA API ---
 
 @app.get("/api/options")
 async def get_options():
     return {
-        "anos": sorted([a for a in df_master['ano'].unique() if a and a != 'nan'], reverse=True),
+        "anos": sorted([str(a) for a in df_master['ano'].unique() if a and a != 'nan' and a != ''], reverse=True),
         "condicoes_meteorologicas": sorted(df_master['condicao_met'].dropna().unique().tolist()),
         "tipos_acidente": sorted(df_master['tipo_acidente'].dropna().unique().tolist()),
         "fases_dia": sorted(df_master['fase_dia'].dropna().unique().tolist())
@@ -72,128 +93,79 @@ async def get_options():
 @app.get("/api/kpis")
 async def get_kpis(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None):
     dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
-    total_acidentes = len(dff)
-    total_mortos = int(dff['mortos'].sum())
-    total_feridos = int(dff['feridos'].sum())
-    taxa = round(total_mortos / total_acidentes * 100, 2) if total_acidentes > 0 else 0
+    total = int(len(dff))
+    mortos = int(dff['mortos'].sum())
+    feridos = int(dff['feridos'].sum())
+    taxa = float(round(mortos / total * 100, 2)) if total > 0 else 0.0
     return {"kpis": [
-        {"id": "total_acidentes", "titulo": "Total Acidentes", "valor": total_acidentes, "formato": "numero", "tendencia": {"texto": "Total", "tipo": "neutro"}, "descricao": ""},
-        {"id": "total_mortos", "titulo": "Total Mortos", "valor": total_mortos, "formato": "numero", "tendencia": {"texto": "Fatais", "tipo": "negativo"}, "descricao": ""},
-        {"id": "total_feridos", "titulo": "Total Feridos", "valor": total_feridos, "formato": "numero", "tendencia": {"texto": "Feridos", "tipo": "neutro"}, "descricao": ""},
-        {"id": "taxa_mortalidade", "titulo": "Mortalidade", "valor": taxa, "formato": "percentual", "tendencia": {"texto": "Letalidade", "tipo": "neutro"}, "descricao": ""}
+        {"id": "total_acidentes", "titulo": "Total", "valor": total, "formato": "numero"},
+        {"id": "total_mortos", "titulo": "Mortos", "valor": mortos, "formato": "numero"},
+        {"id": "total_feridos", "titulo": "Feridos", "valor": feridos, "formato": "numero"},
+        {"id": "taxa_mortalidade", "titulo": "Mortalidade", "valor": taxa, "formato": "percentual"}
     ]}
 
+@app.get("/api/distribuicao-km")
+async def get_distribuicao_km(br: str = None, km_inicio: float = None, km_fim: float = None, ano: str = None, mes: str = None):
+    try:
+        dff = apply_filters(ano, mes)
+        
+        # Filtro de BR
+        if br and str(br).strip() != "":
+            target_br = str(br).replace('.0', '').lstrip('0').strip()
+            dff = dff[dff['br'] == target_br]
+        
+        if dff.empty: return {"faixas_km": []}
+
+        # Tratamento de KM (remover vírgulas e converter para número)
+        dff['km_num'] = dff['km'].astype(str).str.replace(',', '.').str.extract(r'(\d+\.?\d*)')[0]
+        dff['km_num'] = pd.to_numeric(dff['km_num'], errors='coerce')
+        df_valid = dff.dropna(subset=['km_num']).copy()
+        
+        if km_inicio is not None: df_valid = df_valid[df_valid['km_num'] >= km_inicio]
+        if km_fim is not None: df_valid = df_valid[df_valid['km_num'] <= km_fim]
+        
+        if df_valid.empty: return {"faixas_km": []}
+            
+        min_k = int(df_valid['km_num'].min() // 10 * 10)
+        max_k = int(df_valid['km_num'].max() // 10 * 10) + 10
+        bins = list(range(min_k, max_k + 10, 10))
+        labels = [f"{i}-{i+10}" for i in range(min_k, max_k, 10)]
+        
+        df_valid['faixa_km'] = pd.cut(df_valid['km_num'], bins=bins, labels=labels, right=False)
+        
+        resultados = []
+        for faixa, group in df_valid.groupby('faixa_km', observed=False):
+            if group.empty: continue
+            
+            total_km = int(len(group))
+            sev = float(round((group['mortos'].sum() * 13) + (group['feridos'].sum() * 3), 2))
+            
+            counts = group['causa'].value_counts()
+            top_3 = {str(k): int(v) for k, v in counts.head(3).items()}
+            outros = int(counts.iloc[3:].sum())
+            if outros > 0: top_3["Outras Causas"] = outros
+                
+            resultados.append({
+                "faixa_km": str(faixa),
+                "total_acidentes": total_km,
+                "indice_severidade": sev,
+                "causa_predominante": str(counts.index[0]) if not counts.empty else "N/I",
+                "causas_detalhadas": top_3
+            })
+            
+        return {"faixas_km": resultados}
+    except Exception as e:
+        print(f"❌ Erro na API de KM: {e}")
+        return {"faixas_km": []}
+
 @app.get("/api/evolucao")
-async def get_evolucao(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None):
-    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
+async def get_evolucao(ano: str = None, mes: str = None):
+    dff = apply_filters(ano, mes)
     evol = dff.groupby(['ano', 'mes_num']).agg({'id': 'count', 'mortos': 'sum', 'feridos': 'sum'}).reset_index()
-    evol = evol.rename(columns={'id': 'total_acidentes', 'mortos': 'total_mortos', 'feridos': 'total_feridos'})
     evol['mes'] = evol['mes_num'].apply(lambda x: f"{int(x):02d}")
+    evol = evol.rename(columns={'id': 'total_acidentes', 'mortos': 'total_mortos', 'feridos': 'total_feridos'})
     return {"evolucao": evol.to_dict(orient='records')}
 
-@app.get("/api/causas")
-async def get_causas(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None):
-    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
-    causas = dff['causa'].value_counts().head(5).reset_index()
-    causas.columns = ['causa', 'total_acidentes']
-    total = causas['total_acidentes'].sum()
-    causas['percentual'] = round(causas['total_acidentes'] / total * 100, 1) if total > 0 else 0
-    return {"top_causas": causas.to_dict(orient='records')}
-
-@app.get("/api/distribuicoes")
-async def get_distribuicoes(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None):
-    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
-    por_tipo = dff['tipo_acidente'].value_counts().head(8).reset_index()
-    por_tipo.columns = ['name', 'value']
-    por_fase = dff['fase_dia'].value_counts().reset_index()
-    por_fase.columns = ['name', 'value']
-    por_cond = dff['condicao_met'].value_counts().head(6).reset_index()
-    por_cond.columns = ['name', 'value']
-    return {
-        "por_tipo_acidente": por_tipo.to_dict(orient='records'),
-        "por_fase_dia": por_fase.to_dict(orient='records'),
-        "por_condicao_meteorologica": por_cond.to_dict(orient='records')
-    }
-
-@app.get("/api/rankings")
-async def get_rankings(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None):
-    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
-    mun = dff.groupby('municipio').agg(total_acidentes=('id','count'), total_mortos=('mortos','sum'), total_feridos=('feridos','sum')).sort_values('total_acidentes', ascending=False).head(10).reset_index()
-    brs = dff.groupby('br').agg(total_acidentes=('id','count'), total_mortos=('mortos','sum'), total_feridos=('feridos','sum')).sort_values('total_acidentes', ascending=False).head(10).reset_index()
-    return {
-        "top_municipios": mun.to_dict(orient='records'),
-        "top_brs": brs.to_dict(orient='records')
-    }
-
-@app.get("/api/areas-criticas")
-async def get_areas(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None):
-    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
-    mun = dff.groupby('municipio').agg(total_acidentes=('id','count'), total_mortos=('mortos','sum')).reset_index()
-    mun['indice_gravidade'] = round((mun['total_mortos'] * 5) / mun['total_acidentes'], 2)
-    brs = dff.groupby('br').agg(total_acidentes=('id','count'), total_mortos=('mortos','sum')).reset_index()
-    brs['indice_gravidade'] = round((brs['total_mortos'] * 5) / brs['total_acidentes'], 2)
-    return {
-        "municipios_criticos": {"dados": mun.sort_values('indice_gravidade', ascending=False).head(5).to_dict(orient='records')},
-        "brs_criticas": {"dados": brs.sort_values('indice_gravidade', ascending=False).head(5).to_dict(orient='records')}
-    }
-
-@app.get("/api/distribuicao-km")
-async def get_distribuicao_km(ano: str = None, mes: str = None, condicao_met: str = None, tipo_acidente: str = None, fase_dia: str = None, br: str = None):
-    dff = apply_filters(ano, mes, condicao_met, tipo_acidente, fase_dia)
-    
-    # FILTRO DE BR CORRIGIDO E ROBUSTO
-    if br:
-        # Pega a BR selecionada, remove o "0" da frente se houver e tira ".0"
-        filtro_br = str(br).replace('.0', '').lstrip('0').strip()
-        # Faz a mesma limpeza na coluna do dataframe antes de comparar
-        dff_br_limpa = dff['br'].astype(str).str.replace('.0', '', regex=False).str.lstrip('0').str.strip()
-        
-        dff = dff[dff_br_limpa == filtro_br]
-        
-    col_km = next((col for col in ['km_x', 'km', 'quilometro'] if col in dff.columns), None)
-    
-    if not col_km or dff.empty:
-        return {"faixas_km": []}
-        
-    dff['km_limpo'] = dff[col_km].astype(str).str.replace(',', '.').str.strip()
-    dff['km_limpo'] = pd.to_numeric(dff['km_limpo'], errors='coerce')
-    df_valid = dff.dropna(subset=['km_limpo']).copy()
-    
-    if df_valid.empty:
-        return {"faixas_km": []}
-        
-    max_km = int(df_valid['km_limpo'].max()) + 10
-    bins = list(range(0, max_km, 10))
-    labels = [f"{i} - {i+10}" for i in range(0, max_km-10, 10)]
-    
-    df_valid['faixa_km'] = pd.cut(df_valid['km_limpo'], bins=bins, labels=labels, right=False)
-    
-    resultados = []
-    
-    for faixa, group in df_valid.groupby('faixa_km', observed=False):
-        if group.empty:
-            continue
-            
-        total_acidentes = int(len(group))
-        mortos = float(group['mortos'].sum())
-        feridos = float(group['feridos'].sum())
-        
-        severidade = round((mortos * 13) + (feridos * 3), 2)
-        
-        causas_count = group['causa'].value_counts()
-        causa_predominante = causas_count.index[0] if not causas_count.empty else "Não Informado"
-        top_causas = causas_count.head(3).to_dict()
-        
-        resultados.append({
-            "faixa_km": str(faixa),
-            "total_acidentes": total_acidentes,
-            "indice_severidade": severidade,
-            "causa_predominante": str(causa_predominante),
-            "causas_detalhadas": {str(k): int(v) for k, v in top_causas.items()}
-        })
-        
-    return {"faixas_km": resultados}
-    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

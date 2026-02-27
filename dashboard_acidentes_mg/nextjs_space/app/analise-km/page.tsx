@@ -3,70 +3,107 @@
 import { useState } from "react";
 import { useFilters } from "../components/filters-context";
 import KmChart from "../components/km-chart";
+import { MapPin, Check, Route } from "lucide-react";
 
 const PRINCIPAIS_BRS = ["381", "040", "116", "262", "050", "153", "365", "493", "146"]; 
 
 export default function AnaliseKmPage() {
   const { filters } = useFilters();
   
-  // 1. Estado da caixinha de seleção (visão provisória)
+  // Estados da interface (visão provisória)
   const [brSelecionada, setBrSelecionada] = useState("381");
-  
-  // 2. Estado que efetivamente ativa a busca no gráfico (após clique no botão)
-  const [brAplicada, setBrAplicada] = useState("381");
+  const [kmInicioSelecionado, setKmInicioSelecionado] = useState("");
+  const [kmFimSelecionado, setKmFimSelecionado] = useState("");
 
-  // Função disparada ao clicar no botão Aplicar
+  // Estados aplicados ao gráfico (pós clique)
+  const [brAplicada, setBrAplicada] = useState("381");
+  const [kmInicioAplicado, setKmInicioAplicado] = useState("");
+  const [kmFimAplicado, setKmFimAplicado] = useState("");
+
   const handleAplicar = () => {
     setBrAplicada(brSelecionada);
+    setKmInicioAplicado(kmInicioSelecionado);
+    setKmFimAplicado(kmFimSelecionado);
   };
 
   return (
     <div className="p-8 space-y-6 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
           Análise Espacial: KM e Causas
         </h1>
-        <p className="text-muted-foreground mt-2 text-slate-500">
+        <p className="text-gray-500 mt-1">
           Distribuição de acidentes, severidade e causas predominantes por trechos rodoviários.
         </p>
       </div>
 
-      <div className="bg-white p-5 rounded-xl border border-slate-200/60 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 rounded-full bg-primary-purple"></span>
-          <p className="text-sm font-medium text-slate-700">
-            Rodovia (BR) Analisada:
-          </p>
-        </div>
+      <div className="w-full flex flex-wrap items-center gap-4">
         
-        {/* Seletor de BR */}
-        <select
-          value={brSelecionada}
-          onChange={(e) => setBrSelecionada(e.target.value)}
-          className="border border-slate-300 bg-slate-50 rounded-md px-3 py-1.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-purple"
-        >
-          {PRINCIPAIS_BRS.map((br) => (
-            <option key={br} value={br}>
-              BR-{br}
-            </option>
-          ))}
-        </select>
+        {/* Card de BR Transformado em <label> para ser 100% clicável */}
+        <label className="flex-1 min-w-[140px] max-w-[200px] bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:border-purple-200 transition-all cursor-pointer">
+          <div className="flex items-center gap-2 mb-1.5 text-gray-400">
+            <Route size={14} className="text-purple-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Rodovia (BR)</span>
+          </div>
+          <select
+            value={brSelecionada}
+            onChange={(e) => setBrSelecionada(e.target.value)}
+            className="w-full text-sm font-semibold bg-transparent outline-none text-gray-700 cursor-pointer appearance-none"
+          >
+            {PRINCIPAIS_BRS.map((br) => (
+              <option key={br} value={br}>
+                BR-{br}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        {/* NOVO BOTÃO DE APLICAR */}
+        {/* Novo Card: KM Inicial */}
+        <label className="flex-1 min-w-[120px] max-w-[160px] bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:border-purple-200 transition-all cursor-text">
+          <div className="flex items-center gap-2 mb-1.5 text-gray-400">
+            <MapPin size={14} className="text-purple-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">KM Inicial</span>
+          </div>
+          <input
+            type="number"
+            placeholder="Ex: 0"
+            value={kmInicioSelecionado}
+            onChange={(e) => setKmInicioSelecionado(e.target.value)}
+            className="w-full text-sm font-semibold bg-transparent outline-none text-gray-700 placeholder-gray-300"
+          />
+        </label>
+
+        {/* Novo Card: KM Final */}
+        <label className="flex-1 min-w-[120px] max-w-[160px] bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:border-purple-200 transition-all cursor-text">
+          <div className="flex items-center gap-2 mb-1.5 text-gray-400">
+            <MapPin size={14} className="text-purple-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">KM Final</span>
+          </div>
+          <input
+            type="number"
+            placeholder="Ex: 100"
+            value={kmFimSelecionado}
+            onChange={(e) => setKmFimSelecionado(e.target.value)}
+            className="w-full text-sm font-semibold bg-transparent outline-none text-gray-700 placeholder-gray-300"
+          />
+        </label>
+
+        {/* Botão Aplicar */}
         <button 
           onClick={handleAplicar}
-          className="bg-primary-purple hover:bg-purple-700 text-white px-5 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm"
+          className="flex items-center gap-2 px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm h-full"
         >
-          Aplicar Filtro
+          <Check size={16} /> APLICAR FILTRO
         </button>
 
-        <p className="text-xs text-slate-400 ml-auto hidden sm:block">
-          *Selecione a rodovia e clique em Aplicar.
-        </p>
       </div>
 
-      {/* Passando a BR APLICADA (e não a apenas selecionada) para o Gráfico */}
-      <KmChart brEspecifica={brAplicada} />
+      {/* Gráfico recebendo as 3 propriedades aplicadas */}
+      <KmChart 
+        brEspecifica={brAplicada} 
+        kmInicio={kmInicioAplicado} 
+        kmFim={kmFimAplicado} 
+      />
     </div>
   );
 }
